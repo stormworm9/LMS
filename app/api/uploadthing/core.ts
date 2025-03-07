@@ -6,35 +6,21 @@ const f = createUploadthing();
 
 const handleAuth = () => {
   const { userId } = auth();
-  if (!userId) throw new UploadThingError("Unauthorized");
+  if (!userId) throw new Error("Unauthorized");
   return { userId };
 };
 
-// Define FileRouter for UploadThing
+// FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
   courseBanner: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
-    .middleware(async () => handleAuth())
-    .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Upload complete for userId:", metadata.userId);
-      console.log("File URL:", file.url);
-      return { uploadedBy: metadata.userId };
-    }),
-
+  .middleware(handleAuth)
+  .onUploadComplete(() => {}),
   sectionVideo: f({ video: { maxFileSize: "512GB", maxFileCount: 1 } })
-    .middleware(async () => handleAuth())
-    .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Upload complete for userId:", metadata.userId);
-      console.log("File URL:", file.url);
-      return { uploadedBy: metadata.userId };
-    }),
-
+  .middleware(handleAuth)
+  .onUploadComplete(() => {}),
   sectionResource: f(["text", "image", "video", "audio", "pdf"])
-    .middleware(async () => handleAuth())
-    .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Upload complete for userId:", metadata.userId);
-      console.log("File URL:", file.url);
-      return { uploadedBy: metadata.userId };
-    }),
+  .middleware(handleAuth)
+  .onUploadComplete(() => {}),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;
